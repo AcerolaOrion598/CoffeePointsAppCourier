@@ -1,7 +1,17 @@
 <resources>
-    <string name="app_name">CoffePointsAppCourier</string>
+    <string name="app_name">CoffeePointsAppCourier</string>
     <string name="product_list_tv_text">Ваш Ассортимент</string>
     <string name="save_btn">Сохранить</string>
     <string name="hint_edit_tv_text">Добавить Хинт</string>
     <string name="hint_ed_text">Хинт</string>
+    <string name="tracker_tv_text">Активность</string>
+    <string name="visible_tv_text">Показывать меня на карте</string>
+    <string name="status_true">Активен</string>
+    <string name="status_false">Неактивен</string>
+    <string name="exit_tv">Выйти</string>
+    <string name="logout_dialog_title">Выйти?</string>
+    <string name="logout_dialog_message">Вы уверены, что хотите выйти из приложения?</string>
+    <string name="logout_dialog_positive_btn">Да</string>
+    <string name="logout_dialog_negative_btn">Нет</string>
+    <string name="ononoki_chan">Yay! Peace! Peace!</string>
 </resources>
