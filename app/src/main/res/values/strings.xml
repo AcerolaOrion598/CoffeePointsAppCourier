@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CoffePointsAppCourier</string>
+    <string name="product_list_tv_text">Ваш Ассортимент</string>
+    <string name="save_btn">Сохранить</string>
+    <string name="hint_edit_tv_text">Добавить Хинт</string>
+    <string name="hint_ed_text">Хинт</string>
+</resources>

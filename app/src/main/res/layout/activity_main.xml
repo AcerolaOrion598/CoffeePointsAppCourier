@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Activities.MainActivity"
+    android:paddingTop="20dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/products_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/products_list_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/product_list_tv_text"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="24sp"
+            android:textColor="@color/colorBlack87"/>
+
+
+        <RelativeLayout
+            android:id="@+id/products_list_layout"
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            app:layout_constraintTop_toBottomOf="@id/products_list_tv"
+            android:layout_marginTop="10dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/products_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/product_list_save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/products_list_layout"
+            android:background="@drawable/save_button"
+            android:layout_marginTop="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:fontFamily="@font/roboto"
+            android:textColor="@color/colorWhite87"
+            android:textSize="12sp"
+            android:text="@string/save_btn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/hint_edit_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/products_list_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingTop="27dp"
+        android:paddingBottom="20dp"
+        android:background="@drawable/top_border">
+
+        <TextView
+            android:id="@+id/hint_edit_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="24sp"
+            android:textColor="@color/colorBlack87"
+            android:text="@string/hint_edit_tv_text"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/hint_edit_ed"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hint_edit_tv"
+            android:layout_marginTop="20dp"
+            android:paddingTop="10dp"
+            android:paddingStart="15dp"
+            android:fontFamily="@font/roboto"
+            android:textSize="12sp"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:gravity="top"
+            android:hint="@string/hint_ed_text"
+            android:background="@drawable/edit_text_w_stroke"
+            tools:ignore="RtlSymmetry" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/hint_edit_ed"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/save_btn"
+            android:fontFamily="@font/roboto"
+            android:textSize="12sp"
+            android:textColor="@color/colorWhite87"
+            android:background="@drawable/save_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tracker_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hint_edit_container"
+        android:background="@drawable/top_border"
+        android:paddingTop="27dp"
+        android:paddingBottom="20dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <TextView
+            android:id="@+id/tracker_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:fontFamily="@font/roboto_medium"
+            android:textSize="24sp"
+            android:textColor="@color/colorBlack87"
+            android:text="Трекер"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
