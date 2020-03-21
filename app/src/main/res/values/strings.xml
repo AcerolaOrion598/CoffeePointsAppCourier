@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">CoffeePointsAppCourier</string>
+    <string name="owner_tv_text">Ваш Куратор</string>
     <string name="product_list_tv_text">Ваш Ассортимент</string>
     <string name="save_btn">Сохранить</string>
     <string name="hint_edit_tv_text">Добавить Хинт</string>
@@ -9,9 +10,13 @@
     <string name="status_true">Активен</string>
     <string name="status_false">Неактивен</string>
     <string name="exit_tv">Выйти</string>
+    <string name="unset_owner_dialog_title">Открепться?</string>
+    <string name="unset_owner_dialog_message">Вы уверены, что хотите открепиться от данного куратора?</string>
     <string name="logout_dialog_title">Выйти?</string>
     <string name="logout_dialog_message">Вы уверены, что хотите выйти из приложения?</string>
-    <string name="logout_dialog_positive_btn">Да</string>
-    <string name="logout_dialog_negative_btn">Нет</string>
+    <string name="dialog_positive_btn">Да</string>
+    <string name="dialog_negative_btn">Нет</string>
     <string name="ononoki_chan">Yay! Peace! Peace!</string>
+    <string name="mayoi_chan">Shitsurei! Kamimashita!</string>
+    <string name="unset_owner_btn_text">Открепиться</string>
 </resources>

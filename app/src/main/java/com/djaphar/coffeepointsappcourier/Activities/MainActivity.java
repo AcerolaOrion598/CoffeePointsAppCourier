@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView productsRecyclerView;
     private SwitchCompat statusSwitch;
     private TextView statusTv;
+    private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         });
         statusSwitch = findViewById(R.id.status_switch);
         statusTv = findViewById(R.id.status_tv);
+        TextView unsetOwnerBtn = findViewById(R.id.unset_owner_btn);
         TextView exitTv = findViewById(R.id.exit_tv);
 
         statusSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
@@ -48,18 +50,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        exitTv.setOnClickListener(lView -> createLogoutDialog());
+        unsetOwnerBtn.setOnClickListener(lView -> createDialog(R.string.unset_owner_dialog_title, R.string.unset_owner_dialog_message, UNSET_OWNER_ID));
+
+        exitTv.setOnClickListener(lView -> createDialog(R.string.logout_dialog_title, R.string.logout_dialog_message, LOGOUT_ID));
     }
 
-    private void createLogoutDialog() {
+    private void createDialog(int title, int message, int methodId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
-            .setTitle(R.string.logout_dialog_title)
-            .setMessage(R.string.logout_dialog_message)
-            .setNegativeButton(R.string.logout_dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
-            .setPositiveButton(R.string.logout_dialog_positive_btn, (dialogInterface, i) -> {
-                mainViewModel.logout();
-                Toast.makeText(this, R.string.ononoki_chan, Toast.LENGTH_SHORT).show();
+            .setTitle(title)
+            .setMessage(message)
+            .setNegativeButton(R.string.dialog_negative_btn, (dialogInterface, i) -> dialogInterface.cancel())
+            .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> {
+                switch (methodId) {
+                    case UNSET_OWNER_ID:
+                        mainViewModel.unsetOwner();
+                        Toast.makeText(this, R.string.mayoi_chan, Toast.LENGTH_SHORT).show();
+                        break;
+                    case LOGOUT_ID:
+                        mainViewModel.logout();
+                        Toast.makeText(this, R.string.ononoki_chan, Toast.LENGTH_SHORT).show();
+                        break;
+                }
             })
             .show();
     }

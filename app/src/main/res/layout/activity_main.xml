@@ -10,7 +10,9 @@
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context=".Activities.MainActivity"
-        android:paddingTop="20dp">
+        android:paddingTop="20dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tracker_container"
@@ -163,7 +165,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/footer"
+            android:id="@+id/owner_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/products_list_container"
@@ -171,8 +173,57 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
-            android:paddingTop="27dp"
             android:paddingBottom="20dp"
+            android:paddingTop="27dp"
+            android:background="@drawable/top_border">
+
+            <TextView
+                android:id="@+id/owner_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/owner_tv_text"
+                android:fontFamily="@font/roboto_medium"
+                android:textSize="24sp"
+                android:textColor="@color/colorBlack87"/>
+
+            <TextView
+                android:id="@+id/owner_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/owner_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/colorBlack60"
+                android:textSize="18sp"
+                android:text="ИмяФамилия"/>
+
+            <TextView
+                android:id="@+id/unset_owner_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/owner_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/colorRed87"
+                android:textSize="14sp"
+                android:textAllCaps="true"
+                android:text="@string/unset_owner_btn_text"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/owner_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingTop="27dp"
             android:background="@drawable/top_border">
 
             <TextView
@@ -181,17 +232,21 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="20dp"
                 android:fontFamily="@font/roboto"
                 android:textSize="16sp"
                 android:textColor="@color/colorBlue87"
                 android:text="@string/exit_tv"/>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/save_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="20dp"
                 android:text="@string/save_btn"
                 android:fontFamily="@font/roboto"
                 android:textSize="12sp"
