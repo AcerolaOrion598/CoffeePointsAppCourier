@@ -1,11 +1,14 @@
 package com.djaphar.coffeepointsappcourier.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djaphar.coffeepointsappcourier.R;
 import com.djaphar.coffeepointsappcourier.SupportClasses.ProductsRecyclerViewAdapter;
+import com.djaphar.coffeepointsappcourier.SupportClasses.StatusChecker;
 import com.djaphar.coffeepointsappcourier.ViewModels.MainViewModel;
 
 import androidx.appcompat.app.AlertDialog;
@@ -21,11 +24,15 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView productsRecyclerView;
     private SwitchCompat statusSwitch;
     private TextView statusTv;
+    private StatusChecker statusChecker;
     private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        statusChecker = new StatusChecker(new Handler(), this, new Intent(this, StatusErrorActivity.class));
+        statusChecker.startStatusCheck();
+
         setContentView(R.layout.activity_main);
         productsRecyclerView = findViewById(R.id.products_recycler_view);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -53,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
         unsetOwnerBtn.setOnClickListener(lView -> createDialog(R.string.unset_owner_dialog_title, R.string.unset_owner_dialog_message, UNSET_OWNER_ID));
 
         exitTv.setOnClickListener(lView -> createDialog(R.string.logout_dialog_title, R.string.logout_dialog_message, LOGOUT_ID));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        statusChecker.stopStatusCheck();
     }
 
     private void createDialog(int title, int message, int methodId) {
