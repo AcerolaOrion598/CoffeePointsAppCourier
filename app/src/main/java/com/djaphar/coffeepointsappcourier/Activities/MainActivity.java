@@ -2,33 +2,37 @@ package com.djaphar.coffeepointsappcourier.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.TextView;
 
+import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.R;
 import com.djaphar.coffeepointsappcourier.SupportClasses.Adapters.ProductsRecyclerViewAdapter;
+import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.MyAppCompactActivity;
+import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.UserChangeChecker;
 import com.djaphar.coffeepointsappcourier.ViewModels.MainViewModel;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MyAppCompactActivity {
 
     private MainViewModel mainViewModel;
     private RecyclerView productsRecyclerView;
     private SwitchCompat statusSwitch;
     private TextView statusTv;
-//    private StatusChecker statusChecker;
+    private UserChangeChecker userChangeChecker;
+    private User user;
     private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        statusChecker = new StatusChecker(this, new Handler(), new Intent(this, StatusErrorActivity.class));
-//        statusChecker.startStatusCheck();
+        userChangeChecker = new UserChangeChecker(this, new Handler());
+        userChangeChecker.startUserChangeCheck();
 
         setContentView(R.layout.activity_main);
         productsRecyclerView = findViewById(R.id.products_recycler_view);
@@ -40,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
         });
         mainViewModel.getUser().observe(this, user -> {
             if (user != null) {
+                this.user = user;
+                if (user.getSupervisor() == null) {
+                    startActivity(new Intent(this, StatusErrorActivity.class));
+                    finish();
+                    return;
+                }
                 return;
             }
             startActivity(new Intent(this, AuthActivity.class));
@@ -66,9 +76,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        userChangeChecker.startUserChangeCheck();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-//        statusChecker.stopStatusCheck();
+        userChangeChecker.stopUserChangeCheck();
     }
 
     private void createDialog(int title, int message, int methodId) {
@@ -88,5 +104,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             })
             .show();
+    }
+
+    public void requestUser() {
+        if (user == null) {
+            return;
+        }
+        mainViewModel.requestUser(user.get_id(), user.getToken(), user.getUserHash());
     }
 }

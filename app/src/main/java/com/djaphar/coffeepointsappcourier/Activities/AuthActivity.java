@@ -70,7 +70,11 @@ public class AuthActivity extends AppCompatActivity {
             if (user == null) {
                 return;
             }
-            startMainActivity();
+            if (user.getSupervisor() == null) {
+                startNextActivity(new Intent(this, StatusErrorActivity.class));
+            } else {
+                startNextActivity(new Intent(this, MainActivity.class));
+            }
         });
 
         phoneNumberEd.addTextChangedListener(new TextWatcher() {
@@ -167,8 +171,7 @@ public class AuthActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
     }
 
-    private void startMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+    private void startNextActivity(Intent intent) {
         startActivity(intent);
         finish();
     }
