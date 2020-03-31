@@ -6,12 +6,13 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class StatusChecker {
+
     private Handler handler;
     private AppCompatActivity activity;
     private Intent intent;
     private boolean first = true;
 
-    public StatusChecker(Handler handler, AppCompatActivity activity, Intent intent) {
+    public StatusChecker(AppCompatActivity activity, Handler handler, Intent intent) {
         this.handler = handler;
         this.activity = activity;
         this.intent = intent;

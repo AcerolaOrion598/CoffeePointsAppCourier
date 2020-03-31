@@ -18,25 +18,13 @@ public class StatusErrorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status_error);
 
-        statusChecker = new StatusChecker(new Handler(), this, new Intent(this, MainActivity.class));
+        statusChecker = new StatusChecker(this, new Handler(), new Intent(this, MainActivity.class));
         statusChecker.startStatusCheck();
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        statusChecker.startStatusCheck();
-//    }
-
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        statusChecker.stopStatusCheck();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         statusChecker.stopStatusCheck();
     }
 }

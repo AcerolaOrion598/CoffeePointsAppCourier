@@ -1,7 +1,6 @@
 package com.djaphar.coffeepointsappcourier.ViewModels;
 
 import android.app.Application;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 

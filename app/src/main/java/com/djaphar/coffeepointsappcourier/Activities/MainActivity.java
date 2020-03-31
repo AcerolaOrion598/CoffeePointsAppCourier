@@ -1,14 +1,11 @@
 package com.djaphar.coffeepointsappcourier.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djaphar.coffeepointsappcourier.R;
 import com.djaphar.coffeepointsappcourier.SupportClasses.ProductsRecyclerViewAdapter;
-import com.djaphar.coffeepointsappcourier.SupportClasses.StatusChecker;
 import com.djaphar.coffeepointsappcourier.ViewModels.MainViewModel;
 
 import androidx.appcompat.app.AlertDialog;
@@ -24,21 +21,20 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView productsRecyclerView;
     private SwitchCompat statusSwitch;
     private TextView statusTv;
-    private StatusChecker statusChecker;
+//    private StatusChecker statusChecker;
     private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        statusChecker = new StatusChecker(new Handler(), this, new Intent(this, StatusErrorActivity.class));
-        statusChecker.startStatusCheck();
+//        statusChecker = new StatusChecker(this, new Handler(), new Intent(this, StatusErrorActivity.class));
+//        statusChecker.startStatusCheck();
 
         setContentView(R.layout.activity_main);
         productsRecyclerView = findViewById(R.id.products_recycler_view);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getProducts().observe(this, products -> {
-            ProductsRecyclerViewAdapter adapter = new ProductsRecyclerViewAdapter(products);
-            productsRecyclerView.setAdapter(adapter);
+            productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products));
             productsRecyclerView.setNestedScrollingEnabled(false);
             productsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         });
@@ -63,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        statusChecker.stopStatusCheck();
+    protected void onPause() {
+        super.onPause();
+//        statusChecker.stopStatusCheck();
     }
 
     private void createDialog(int title, int message, int methodId) {

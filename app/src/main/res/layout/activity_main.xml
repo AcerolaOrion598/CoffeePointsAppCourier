@@ -148,7 +148,6 @@
                 android:textSize="24sp"
                 android:textColor="@color/colorBlack87"/>
 
-
             <RelativeLayout
                 android:id="@+id/products_list_layout"
                 android:layout_width="match_parent"
