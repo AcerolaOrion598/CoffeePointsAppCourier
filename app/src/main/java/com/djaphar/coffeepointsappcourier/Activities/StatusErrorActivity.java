@@ -24,7 +24,6 @@ public class StatusErrorActivity extends MyAppCompactActivity {
         setContentView(R.layout.activity_status_error);
 
         userChangeChecker = new UserChangeChecker(this, new Handler());
-        userChangeChecker.startUserChangeCheck();
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getUser().observe(this, user -> {
             if (user == null) {

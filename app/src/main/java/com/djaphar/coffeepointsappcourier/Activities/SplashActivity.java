@@ -18,7 +18,11 @@ public class SplashActivity extends AppCompatActivity {
         AuthViewModel authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.getUser().observe(this, user -> {
             if (user != null) {
-                startNewActivity(new Intent(this, MainActivity.class));
+                if (user.getSupervisor() == null) {
+                    startNewActivity(new Intent(this, StatusErrorActivity.class));
+                } else {
+                    startNewActivity(new Intent(this, MainActivity.class));
+                }
             } else {
                 startNewActivity(new Intent(this, AuthActivity.class));
             }

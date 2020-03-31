@@ -32,7 +32,6 @@ public class MainActivity extends MyAppCompactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userChangeChecker = new UserChangeChecker(this, new Handler());
-        userChangeChecker.startUserChangeCheck();
 
         setContentView(R.layout.activity_main);
         productsRecyclerView = findViewById(R.id.products_recycler_view);
