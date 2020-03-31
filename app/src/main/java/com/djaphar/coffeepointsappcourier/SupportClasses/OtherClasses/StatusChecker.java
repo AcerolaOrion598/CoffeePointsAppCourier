@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointsappcourier.SupportClasses;
+package com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses;
 
 import android.content.Intent;
 import android.os.Handler;

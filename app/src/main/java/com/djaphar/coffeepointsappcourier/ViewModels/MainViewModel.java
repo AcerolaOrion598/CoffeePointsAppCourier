@@ -2,15 +2,22 @@ package com.djaphar.coffeepointsappcourier.ViewModels;
 
 import android.app.Application;
 
+import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
+import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserDao;
+import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserRoom;
+
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class MainViewModel extends AndroidViewModel {
 
+    private LiveData<User> userLiveData;
     private MutableLiveData<ArrayList<String>> products = new MutableLiveData<>();
+    private UserDao userDao;
     private ArrayList<String> productList = new ArrayList<>();
 
     public MainViewModel(@NonNull Application application) {
@@ -40,13 +47,22 @@ public class MainViewModel extends AndroidViewModel {
         productList.add(product10);
 
         products.setValue(productList);
+        UserRoom userRoom = UserRoom.getDatabase(application);
+        userDao = userRoom.userDao();
+        userLiveData = userDao.getUserLiveData();
     }
 
     public MutableLiveData<ArrayList<String>> getProducts() {
         return products;
     }
 
-    public void logout() { }
+    public LiveData<User> getUser() {
+        return userLiveData;
+    }
+
+    public void logout() {
+        UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUser());
+    }
 
     public void unsetOwner() { }
 }

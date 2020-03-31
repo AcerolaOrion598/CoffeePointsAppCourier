@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.djaphar.coffeepointsappcourier.R;
-import com.djaphar.coffeepointsappcourier.SupportClasses.StatusChecker;
+import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.StatusChecker;
 
 import androidx.appcompat.app.AppCompatActivity;
 

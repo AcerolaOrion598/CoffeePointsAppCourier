@@ -1,11 +1,11 @@
 package com.djaphar.coffeepointsappcourier.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.djaphar.coffeepointsappcourier.R;
-import com.djaphar.coffeepointsappcourier.SupportClasses.ProductsRecyclerViewAdapter;
+import com.djaphar.coffeepointsappcourier.SupportClasses.Adapters.ProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointsappcourier.ViewModels.MainViewModel;
 
 import androidx.appcompat.app.AlertDialog;
@@ -37,6 +37,13 @@ public class MainActivity extends AppCompatActivity {
             productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products));
             productsRecyclerView.setNestedScrollingEnabled(false);
             productsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        });
+        mainViewModel.getUser().observe(this, user -> {
+            if (user != null) {
+                return;
+            }
+            startActivity(new Intent(this, AuthActivity.class));
+            finish();
         });
         statusSwitch = findViewById(R.id.status_switch);
         statusTv = findViewById(R.id.status_tv);
@@ -74,11 +81,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (methodId) {
                     case UNSET_OWNER_ID:
                         mainViewModel.unsetOwner();
-                        Toast.makeText(this, R.string.mayoi_chan, Toast.LENGTH_SHORT).show();
                         break;
                     case LOGOUT_ID:
                         mainViewModel.logout();
-                        Toast.makeText(this, R.string.ononoki_chan, Toast.LENGTH_SHORT).show();
                         break;
                 }
             })

@@ -19,5 +19,12 @@
     <string name="ononoki_chan">Yay! Peace! Peace!</string>
     <string name="mayoi_chan">Shitsurei! Kamimashita!</string>
     <string name="unset_owner_btn_text">Открепиться</string>
+    <string name="title_log_in">Вход</string>
+    <string name="auth_instruction_tv_num_text">Введите Ваш номер телефона, на который мы отправим код подтверждения</string>
+    <string name="auth_instruction_tv_code_text">Введите код, который мы отправили на номер:</string>
+    <string name="phone_number_ed_text">Номер телефона</string>
+    <string name="sms_code_ed_text">Код из смс</string>
+    <string name="request_code_btn_text">Далее</string>
+    <string name="log_in_btn">Войти</string>
     <string name="status_error_text">Функционал приложения недоступен, так как Вы не привязаны ни к какому куратору. Обратитесь к своему руководству.</string>
 </resources>

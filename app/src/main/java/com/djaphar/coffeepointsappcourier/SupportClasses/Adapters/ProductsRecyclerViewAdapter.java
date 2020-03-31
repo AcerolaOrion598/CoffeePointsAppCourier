@@ -1,4 +1,4 @@
-package com.djaphar.coffeepointsappcourier.SupportClasses;
+package com.djaphar.coffeepointsappcourier.SupportClasses.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
