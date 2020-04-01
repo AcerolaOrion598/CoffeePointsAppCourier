@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
 
+import com.djaphar.coffeepointsappcourier.ApiClasses.Coordinates;
+import com.djaphar.coffeepointsappcourier.ApiClasses.UpdatedUser;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.R;
 import com.djaphar.coffeepointsappcourier.SupportClasses.Adapters.ProductsRecyclerViewAdapter;
@@ -23,7 +25,7 @@ public class MainActivity extends MyAppCompactActivity {
     private MainViewModel mainViewModel;
     private RecyclerView productsRecyclerView;
     private SwitchCompat statusSwitch;
-    private TextView statusTv;
+    private TextView statusTv, ownerNameTv;
     private UserChangeChecker userChangeChecker;
     private User user;
     private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
@@ -32,9 +34,13 @@ public class MainActivity extends MyAppCompactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userChangeChecker = new UserChangeChecker(this, new Handler());
-
         setContentView(R.layout.activity_main);
+        statusSwitch = findViewById(R.id.status_switch);
+        statusTv = findViewById(R.id.status_tv);
         productsRecyclerView = findViewById(R.id.products_recycler_view);
+        ownerNameTv = findViewById(R.id.owner_name_tv);
+        TextView unsetOwnerBtn = findViewById(R.id.unset_owner_btn);
+        TextView exitTv = findViewById(R.id.exit_tv);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getProducts().observe(this, products -> {
             productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products));
@@ -49,15 +55,12 @@ public class MainActivity extends MyAppCompactActivity {
                     finish();
                     return;
                 }
+                ownerNameTv.setText(user.getSupervisor());
                 return;
             }
             startActivity(new Intent(this, AuthActivity.class));
             finish();
         });
-        statusSwitch = findViewById(R.id.status_switch);
-        statusTv = findViewById(R.id.status_tv);
-        TextView unsetOwnerBtn = findViewById(R.id.unset_owner_btn);
-        TextView exitTv = findViewById(R.id.exit_tv);
 
         statusSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             if (isChecked) {
@@ -95,7 +98,8 @@ public class MainActivity extends MyAppCompactActivity {
             .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> {
                 switch (methodId) {
                     case UNSET_OWNER_ID:
-                        mainViewModel.unsetOwner();
+                        mainViewModel.unsetOwner(user.get_id(), user.getToken(),
+                                new UpdatedUser(true, false, null, new Coordinates(37.55, 35.77)));
                         break;
                     case LOGOUT_ID:
                         mainViewModel.logout();

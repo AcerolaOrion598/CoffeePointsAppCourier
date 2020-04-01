@@ -14,7 +14,10 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activities.AuthActivity"></activity>
-        <activity android:name=".Activities.StatusErrorActivity" />
+        <activity
+            android:name=".Activities.StatusErrorActivity"
+            android:theme="@style/AppTheme.Main">
+        </activity>
         <activity
             android:name=".Activities.SplashActivity"
             android:theme="@style/AppTheme.Launcher">
