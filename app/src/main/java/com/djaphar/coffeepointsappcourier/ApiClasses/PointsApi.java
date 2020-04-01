@@ -3,6 +3,7 @@ package com.djaphar.coffeepointsappcourier.ApiClasses;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.Supervisor;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -29,4 +30,7 @@ public interface PointsApi {
 
     @PUT("api/couriers/{id}/self")
     Call<User> requestUnsetOwner(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body UpdatedUser updatedUser);
+
+    @GET("api/supervisors/{id}/products")
+    Call<List<Product>> requestSupervisorProducts(@Path("id") String id, @HeaderMap Map<String, String> headers);
 }

@@ -7,18 +7,19 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.djaphar.coffeepointsappcourier.ApiClasses.Product;
 import com.djaphar.coffeepointsappcourier.R;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<String> products;
+    private List<Product> products;
 
-    public ProductsRecyclerViewAdapter(ArrayList<String> products) {
+    public ProductsRecyclerViewAdapter(List<Product> products) {
         this.products = products;
     }
 
@@ -36,7 +37,12 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.productNameTv.setText(products.get(position));
+        Product product = products.get(position);
+        if (product == null) {
+            return;
+        }
+        holder.productNameTv.setText(product.getName());
+        holder.productTypeTv.setText(product.getType());
     }
 
     @Override
@@ -46,12 +52,13 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
 
     static class ViewHolder extends  RecyclerView.ViewHolder {
         RelativeLayout parentLayout;
-        TextView productNameTv;
+        TextView productNameTv, productTypeTv;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             parentLayout = itemView.findViewById(R.id.parent_layout_products);
             productNameTv = itemView.findViewById(R.id.product_name_tv);
+            productTypeTv = itemView.findViewById(R.id.product_type_tv);
         }
     }
 }

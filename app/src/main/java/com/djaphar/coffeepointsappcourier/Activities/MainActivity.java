@@ -42,6 +42,7 @@ public class MainActivity extends MyAppCompactActivity {
         TextView unsetOwnerBtn = findViewById(R.id.unset_owner_btn);
         TextView exitTv = findViewById(R.id.exit_tv);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         mainViewModel.getProducts().observe(this, products -> {
             productsRecyclerView.setAdapter(new ProductsRecyclerViewAdapter(products));
             productsRecyclerView.setNestedScrollingEnabled(false);
@@ -56,6 +57,7 @@ public class MainActivity extends MyAppCompactActivity {
                     return;
                 }
                 mainViewModel.requestSupervisor(user.getSupervisor());
+                mainViewModel.requestSupervisorProducts(user);
                 return;
             }
             startActivity(new Intent(this, AuthActivity.class));

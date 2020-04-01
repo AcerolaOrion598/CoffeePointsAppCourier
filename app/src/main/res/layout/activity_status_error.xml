@@ -21,4 +21,18 @@
         android:textSize="36sp"
         android:fontFamily="@font/roboto_medium"
         android:textColor="@color/colorBlack30"/>
+
+    <TextView
+        android:id="@+id/status_error_exit_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="@font/roboto"
+        android:textSize="24sp"
+        android:textColor="@color/colorBlue87"
+        android:text="@string/exit_tv"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

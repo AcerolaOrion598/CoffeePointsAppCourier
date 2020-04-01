@@ -4,14 +4,15 @@ import android.app.Application;
 import android.widget.Toast;
 
 import com.djaphar.coffeepointsappcourier.ApiClasses.PointsApi;
+import com.djaphar.coffeepointsappcourier.ApiClasses.Product;
 import com.djaphar.coffeepointsappcourier.ApiClasses.UpdatedUser;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.Supervisor;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserRoom;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -28,45 +29,19 @@ public class MainViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
     private MutableLiveData<Supervisor> supervisorMutableLiveData = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<String>> products = new MutableLiveData<>();
+    private MutableLiveData<List<Product>> productsMutableLiveData = new MutableLiveData<>();
     private UserDao userDao;
-    private ArrayList<String> productList = new ArrayList<>();
     private final static String baseUrl = "http://212.109.219.69:3007/";
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-
-        productList.clear();
-        String product1 ="Кофеёк 1";
-        String product2 ="Кофеёк 2";
-        String product3 ="Мороженное";
-        String product4 ="Кофеёк 3";
-        String product5 ="Блинчики";
-        String product6 ="Мороженка 2";
-        String product7 ="Блинчики 2";
-        String product8 ="Блинчики 3";
-        String product9 ="Блинчики 4";
-        String product10 ="Блинчики 5";
-
-        productList.add(product1);
-        productList.add(product2);
-        productList.add(product3);
-        productList.add(product4);
-        productList.add(product5);
-        productList.add(product6);
-        productList.add(product7);
-        productList.add(product8);
-        productList.add(product9);
-        productList.add(product10);
-
-        products.setValue(productList);
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
         userLiveData = userDao.getUserLiveData();
     }
 
-    public MutableLiveData<ArrayList<String>> getProducts() {
-        return products;
+    public MutableLiveData<List<Product>> getProducts() {
+        return productsMutableLiveData;
     }
 
     public LiveData<User> getUser() {
@@ -171,6 +146,32 @@ public class MainViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<Supervisor> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestSupervisorProducts(User user) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        PointsApi pointsApi = retrofit.create(PointsApi.class);
+        Map<String, String> headersMap = new HashMap<>();
+        headersMap.put("Authorization", user.getToken());
+        Call<List<Product>> call = pointsApi.requestSupervisorProducts(user.getSupervisor(), headersMap);
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Product>> call, @NonNull Response<List<Product>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                productsMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Product>> call, @NonNull Throwable t) {
                 Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
