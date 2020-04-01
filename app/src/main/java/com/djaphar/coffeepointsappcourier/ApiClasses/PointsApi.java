@@ -1,7 +1,7 @@
 package com.djaphar.coffeepointsappcourier.ApiClasses;
 
+import com.djaphar.coffeepointsappcourier.LocalDataClasses.Supervisor;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
-import com.google.gson.Gson;
 
 import java.util.Map;
 
@@ -23,6 +23,9 @@ public interface PointsApi {
 
     @GET("api/couriers/{id}")
     Call<User> requestUser(@Path("id") String id, @HeaderMap Map<String, String> headers);
+
+    @GET("api/supervisors/{id}")
+    Call<Supervisor> requestSupervisor(@Path("id") String id);
 
     @PUT("api/couriers/{id}/self")
     Call<User> requestUnsetOwner(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body UpdatedUser updatedUser);

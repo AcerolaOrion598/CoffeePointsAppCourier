@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import com.djaphar.coffeepointsappcourier.ApiClasses.PointsApi;
 import com.djaphar.coffeepointsappcourier.ApiClasses.UpdatedUser;
+import com.djaphar.coffeepointsappcourier.LocalDataClasses.Supervisor;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserRoom;
@@ -26,6 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
+    private MutableLiveData<Supervisor> supervisorMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<ArrayList<String>> products = new MutableLiveData<>();
     private UserDao userDao;
     private ArrayList<String> productList = new ArrayList<>();
@@ -69,6 +71,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<User> getUser() {
         return userLiveData;
+    }
+
+    public MutableLiveData<Supervisor> getSupervisor() {
+        return supervisorMutableLiveData;
     }
 
     public void logout() {
@@ -140,6 +146,31 @@ public class MainViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestSupervisor(String id) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        PointsApi pointsApi = retrofit.create(PointsApi.class);
+        Call<Supervisor> call = pointsApi.requestSupervisor(id);
+        call.enqueue(new Callback<Supervisor>() {
+            @Override
+            public void onResponse(@NonNull Call<Supervisor> call, @NonNull Response<Supervisor> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Supervisor supervisor = response.body();
+                supervisorMutableLiveData.setValue(supervisor);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Supervisor> call, @NonNull Throwable t) {
                 Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

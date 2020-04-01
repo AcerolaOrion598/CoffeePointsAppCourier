@@ -55,11 +55,17 @@ public class MainActivity extends MyAppCompactActivity {
                     finish();
                     return;
                 }
-                ownerNameTv.setText(user.getSupervisor());
+                mainViewModel.requestSupervisor(user.getSupervisor());
                 return;
             }
             startActivity(new Intent(this, AuthActivity.class));
             finish();
+        });
+        mainViewModel.getSupervisor().observe(this, supervisor -> {
+            if (supervisor == null) {
+                return;
+            }
+            ownerNameTv.setText(supervisor.getName());
         });
 
         statusSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
