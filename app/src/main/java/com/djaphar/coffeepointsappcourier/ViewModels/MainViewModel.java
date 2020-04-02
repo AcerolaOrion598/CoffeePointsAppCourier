@@ -61,7 +61,7 @@ public class MainViewModel extends AndroidViewModel {
         UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUser());
     }
 
-    public void unsetOwner(String id, String token, UpdatableUser updatableUser) {
+    public void requestUpdateCourier(String id, String token, UpdatableUser updatableUser, boolean unset) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -82,9 +82,15 @@ public class MainViewModel extends AndroidViewModel {
                 if (user == null) {
                     return;
                 }
-                Integer newHash = user.determineHash();
-                user.setUserHash(newHash);
-                UserRoom.databaseWriteExecutor.execute(() -> userDao.updateUser(response.body()));
+
+                if (unset) {
+                    Integer newHash = user.determineHash();
+                    user.setUserHash(newHash);
+                    UserRoom.databaseWriteExecutor.execute(() -> userDao.updateUser(response.body()));
+                    return;
+                }
+
+                requestUpdatableUser(id, token);
             }
 
             @Override

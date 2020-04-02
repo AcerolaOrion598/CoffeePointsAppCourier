@@ -28,13 +28,14 @@ public class MainActivity extends MyAppCompactActivity {
 
     private MainViewModel mainViewModel;
     private RecyclerView productsRecyclerView;
-    private SwitchCompat statusSwitch;
     private TextView statusTv, ownerNameTv;
     private UserChangeChecker userChangeChecker;
     private User user;
     private UpdatableUser updatableUser;
     private ArrayList<Product> updatedProducts = new ArrayList<>();
     private ArrayList<Product> products;
+    private Coordinates coordinates = new Coordinates(37.55, 35.77);
+    private Boolean visible, status;
     private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
 
     @Override
@@ -42,7 +43,8 @@ public class MainActivity extends MyAppCompactActivity {
         super.onCreate(savedInstanceState);
         userChangeChecker = new UserChangeChecker(this, new Handler());
         setContentView(R.layout.activity_main);
-        statusSwitch = findViewById(R.id.status_switch);
+        SwitchCompat visibleSwitch = findViewById(R.id.visible_switch);
+        SwitchCompat statusSwitch = findViewById(R.id.status_switch);
         statusTv = findViewById(R.id.status_tv);
         productsRecyclerView = findViewById(R.id.products_recycler_view);
         ownerNameTv = findViewById(R.id.owner_name_tv);
@@ -79,6 +81,10 @@ public class MainActivity extends MyAppCompactActivity {
         mainViewModel.getUpdatableUser().observe(this, updatableUser -> {
             if (updatableUser != null) {
                 this.updatableUser = updatableUser;
+                visible = updatableUser.isActive();
+                status = updatableUser.isCurrentlyNotHere();
+                visibleSwitch.setChecked(updatableUser.isActive());
+                statusSwitch.setChecked(updatableUser.isCurrentlyNotHere());
             }
 
             if (products == null) {
@@ -94,7 +100,10 @@ public class MainActivity extends MyAppCompactActivity {
             ownerNameTv.setText(supervisor.getName());
         });
 
+        visibleSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> visible = isChecked);
+
         statusSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            status = isChecked;
             if (isChecked) {
                 statusTv.setText(R.string.status_true);
                 statusTv.setTextColor(getResources().getColor(R.color.colorGreen87));
@@ -104,7 +113,7 @@ public class MainActivity extends MyAppCompactActivity {
             }
         });
 
-        saveBtn.setOnClickListener(lView -> requestProductsListToggle());
+        saveBtn.setOnClickListener(lView -> saveUpdates());
 
         unsetOwnerBtn.setOnClickListener(lView -> createDialog(R.string.unset_owner_dialog_title, R.string.unset_owner_dialog_message, UNSET_OWNER_ID));
 
@@ -132,8 +141,8 @@ public class MainActivity extends MyAppCompactActivity {
             .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> {
                 switch (methodId) {
                     case UNSET_OWNER_ID:
-                        mainViewModel.unsetOwner(user.get_id(), user.getToken(),
-                                new UpdatableUser(false, false, null, new Coordinates(37.55, 35.77), null));
+                        setUpdatableUserOptions(false, false, null, coordinates);
+                        mainViewModel.requestUpdateCourier(user.get_id(), user.getToken(), updatableUser,true);
                         break;
                     case LOGOUT_ID:
                         mainViewModel.logout();
@@ -149,12 +158,10 @@ public class MainActivity extends MyAppCompactActivity {
         productsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    public void addUpdatedProduct(Product product) {
-        updatedProducts.add(product);
-    }
-
-    public void removeUpdatedProduct(Product product) {
-        updatedProducts.remove(product);
+    private void saveUpdates() {
+        setUpdatableUserOptions(visible, status, user.getSupervisor(), coordinates);
+        mainViewModel.requestUpdateCourier(user.get_id(), user.getToken(), updatableUser, false);
+        requestProductsListToggle();
     }
 
     private void requestProductsListToggle() {
@@ -164,10 +171,35 @@ public class MainActivity extends MyAppCompactActivity {
         updatedProducts.clear();
     }
 
+    private void setUpdatableUserOptions(boolean active, boolean notHere, String supervisorId, Coordinates coordinates) {
+        updatableUser.setActive(active);
+        updatableUser.setCurrentlyNotHere(notHere);
+        updatableUser.setSupervisor(supervisorId);
+        updatableUser.setCoordinates(coordinates);
+    }
+
+//    private void refresh() {
+//        mainViewModel.requestUser(user.get_id(), user.getToken(), user.getUserHash());
+//        mainViewModel.requestSupervisor(user.getSupervisor());
+//        mainViewModel.requestSupervisorProducts(user.getToken(), user.getSupervisor());
+//        mainViewModel.requestUpdatableUser(user.get_id(), user.getToken());
+//    }
+
+    public void addUpdatedProduct(Product product) {
+        updatedProducts.add(product);
+    }
+
+    public void removeUpdatedProduct(Product product) {
+        updatedProducts.remove(product);
+    }
+
     public void requestUser() {
         if (user == null) {
             return;
         }
         mainViewModel.requestUser(user.get_id(), user.getToken(), user.getUserHash());
+//        mainViewModel.requestSupervisor(user.getSupervisor());
+//        mainViewModel.requestSupervisorProducts(user.getToken(), user.getSupervisor());
+//        mainViewModel.requestUpdatableUser(user.get_id(), user.getToken());
     }
 }
