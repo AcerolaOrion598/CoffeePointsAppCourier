@@ -3,7 +3,7 @@ package com.djaphar.coffeepointsappcourier.ApiClasses;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.Supervisor;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -25,12 +25,18 @@ public interface PointsApi {
     @GET("api/couriers/{id}")
     Call<User> requestUser(@Path("id") String id, @HeaderMap Map<String, String> headers);
 
+    @GET("api/couriers/{id}")
+    Call<UpdatableUser> requestUpdatableUser(@Path("id") String id, @HeaderMap Map<String, String> headers);
+
     @GET("api/supervisors/{id}")
     Call<Supervisor> requestSupervisor(@Path("id") String id);
 
     @PUT("api/couriers/{id}/self")
-    Call<User> requestUnsetOwner(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body UpdatedUser updatedUser);
+    Call<User> requestUnsetOwner(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body UpdatableUser updatableUser);
 
     @GET("api/supervisors/{id}/products")
-    Call<List<Product>> requestSupervisorProducts(@Path("id") String id, @HeaderMap Map<String, String> headers);
+    Call<ArrayList<Product>> requestSupervisorProducts(@Path("id") String id, @HeaderMap Map<String, String> headers);
+
+    @GET("api/products/{id}/togglelist")
+    Call<Void> requestProductsListToggle(@Path("id") String id, @HeaderMap Map<String, String> headers);
 }
