@@ -69,7 +69,7 @@ public class MainViewModel extends AndroidViewModel {
         PointsApi pointsApi = retrofit.create(PointsApi.class);
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Authorization", token);
-        Call<User> call = pointsApi.requestUnsetOwner(id, headersMap, updatableUser);
+        Call<User> call = pointsApi.requestUpdateCourier(id, headersMap, updatableUser);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {

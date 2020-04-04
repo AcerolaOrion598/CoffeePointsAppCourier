@@ -32,7 +32,7 @@ public interface PointsApi {
     Call<Supervisor> requestSupervisor(@Path("id") String id);
 
     @PUT("api/couriers/{id}/self")
-    Call<User> requestUnsetOwner(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body UpdatableUser updatableUser);
+    Call<User> requestUpdateCourier(@Path("id") String id, @HeaderMap Map<String, String> headers, @Body UpdatableUser updatableUser);
 
     @GET("api/supervisors/{id}/products")
     Call<ArrayList<Product>> requestSupervisorProducts(@Path("id") String id, @HeaderMap Map<String, String> headers);

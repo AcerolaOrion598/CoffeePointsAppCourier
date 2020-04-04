@@ -1,5 +1,6 @@
 package com.djaphar.coffeepointsappcourier.Activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,11 +14,14 @@ import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.R;
 import com.djaphar.coffeepointsappcourier.SupportClasses.Adapters.ProductsRecyclerViewAdapter;
 import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.MyAppCompactActivity;
+import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.PermissionDriver;
 import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.UserChangeChecker;
+import com.djaphar.coffeepointsappcourier.SupportClasses.Services.LocationUpdateService;
 import com.djaphar.coffeepointsappcourier.ViewModels.MainViewModel;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,6 +40,7 @@ public class MainActivity extends MyAppCompactActivity {
     private ArrayList<Product> products;
     private Coordinates coordinates = new Coordinates(37.55, 35.77);
     private Boolean visible, status;
+    private String[] perms = new String[2];
     private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
 
     @Override
@@ -51,6 +56,8 @@ public class MainActivity extends MyAppCompactActivity {
         Button saveBtn = findViewById(R.id.save_btn);
         TextView unsetOwnerBtn = findViewById(R.id.unset_owner_btn);
         TextView exitTv = findViewById(R.id.exit_tv);
+        perms[0] = Manifest.permission.ACCESS_COARSE_LOCATION;
+        perms[1] = Manifest.permission.ACCESS_FINE_LOCATION;
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         mainViewModel.getProducts().observe(this, products -> {
@@ -65,6 +72,7 @@ public class MainActivity extends MyAppCompactActivity {
             if (user != null) {
                 this.user = user;
                 if (user.getSupervisor() == null) {
+                    stopService(new Intent(this, LocationUpdateService.class));
                     startActivity(new Intent(this, StatusErrorActivity.class));
                     finish();
                     return;
@@ -74,6 +82,7 @@ public class MainActivity extends MyAppCompactActivity {
                 mainViewModel.requestUpdatableUser(user.get_id(), user.getToken());
                 return;
             }
+            stopService(new Intent(this, LocationUpdateService.class));
             startActivity(new Intent(this, AuthActivity.class));
             finish();
         });
@@ -85,6 +94,13 @@ public class MainActivity extends MyAppCompactActivity {
                 status = updatableUser.isCurrentlyNotHere();
                 visibleSwitch.setChecked(updatableUser.isActive());
                 statusSwitch.setChecked(updatableUser.isCurrentlyNotHere());
+                if (updatableUser.isActive()) {
+                    if (PermissionDriver.hasPerms(perms, getApplicationContext())) {
+                        startLocationUpdateService();
+                    } else {
+                        PermissionDriver.requestPerms(this, perms);
+                    }
+                }
             }
 
             if (products == null) {
@@ -132,6 +148,12 @@ public class MainActivity extends MyAppCompactActivity {
         userChangeChecker.stopUserChangeCheck();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        startLocationUpdateService();
+    }
+
     private void createDialog(int title, int message, int methodId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
@@ -159,6 +181,7 @@ public class MainActivity extends MyAppCompactActivity {
     }
 
     private void saveUpdates() {
+        stopService(new Intent(this, LocationUpdateService.class));
         setUpdatableUserOptions(visible, status, user.getSupervisor(), coordinates);
         mainViewModel.requestUpdateCourier(user.get_id(), user.getToken(), updatableUser, false);
         requestProductsListToggle();
@@ -176,6 +199,17 @@ public class MainActivity extends MyAppCompactActivity {
         updatableUser.setCurrentlyNotHere(notHere);
         updatableUser.setSupervisor(supervisorId);
         updatableUser.setCoordinates(coordinates);
+    }
+
+    private void startLocationUpdateService() {
+        Intent intent = new Intent(this, LocationUpdateService.class);
+        stopService(intent);
+        intent.putExtra("isActive", visible);
+        intent.putExtra("isCurrentlyNotHere", status);
+        intent.putExtra("supervisor", updatableUser.getSupervisor());
+        intent.putExtra("userId", user.get_id());
+        intent.putExtra("userToken", user.getToken());
+        startService(intent);
     }
 
 //    private void refresh() {
