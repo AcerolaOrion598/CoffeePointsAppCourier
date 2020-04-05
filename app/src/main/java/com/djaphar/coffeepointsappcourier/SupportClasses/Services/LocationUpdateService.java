@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 
 import com.djaphar.coffeepointsappcourier.Activities.MainActivity;
@@ -39,14 +40,23 @@ public class LocationUpdateService extends Service {
     private UpdatableUser updatableUser = null;
     private String userId;
     private Map<String, String> userToken;
-    PointsApi pointsApi = null;
+    private PointsApi pointsApi = null;
+    private Handler handler;
+    private LocationUpdateListener[] locationListeners = new LocationUpdateListener[] {
+            new LocationUpdateListener(LocationManager.GPS_PROVIDER),
+            new LocationUpdateListener(LocationManager.NETWORK_PROVIDER)
+    };
+
 
     private class LocationUpdateListener implements LocationListener {
 
         Location lastLocation;
+        String provider;
+        boolean listenerRegistered = false;
 
         LocationUpdateListener(String provider) {
             lastLocation = new Location(provider);
+            this.provider = provider;
         }
 
         @Override
@@ -64,6 +74,11 @@ public class LocationUpdateService extends Service {
                 @Override
                 public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) { }
             });
+
+            if (locationManager != null) {
+                listenerRegistered = false;
+                locationManager.removeUpdates(this);
+            }
         }
 
         @Override
@@ -75,11 +90,6 @@ public class LocationUpdateService extends Service {
         @Override
         public void onProviderDisabled(String s) { }
     }
-
-    LocationListener[] locationListeners = new LocationListener[] {
-        new LocationUpdateListener(LocationManager.GPS_PROVIDER),
-        new LocationUpdateListener(LocationManager.NETWORK_PROVIDER)
-    };
 
     @Nullable
     @Override
@@ -97,7 +107,6 @@ public class LocationUpdateService extends Service {
             userId = extras.getString("userId");
             userToken = new HashMap<>();
             userToken.put("Authorization", Objects.requireNonNull(extras.getString("userToken")));
-
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("http://212.109.219.69:3007/")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -119,19 +128,15 @@ public class LocationUpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        handler = new Handler();
         initializeLocationManager();
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 1f, locationListeners[1]);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 1f, locationListeners[0]);
+        startRunnable();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (locationManager != null) {
-            for (LocationListener locationListener : locationListeners) {
-                locationManager.removeUpdates(locationListener);
-            }
-        }
+        handler.removeCallbacksAndMessages(null);
     }
 
     private void initializeLocationManager() {
@@ -139,4 +144,18 @@ public class LocationUpdateService extends Service {
             locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
     }
+
+    private void startRunnable() {
+        asyncLocationUpdater.run();
+    }
+
+    private Runnable asyncLocationUpdater = () -> {
+        for (LocationUpdateListener listener : locationListeners) {
+            if (!listener.listenerRegistered) {
+                locationManager.requestLocationUpdates(listener.provider, 100, 1f, listener);
+                listener.listenerRegistered = true;
+            }
+        }
+        handler.postDelayed(this::startRunnable, 6000);
+    };
 }
