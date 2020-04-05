@@ -9,6 +9,7 @@ import com.djaphar.coffeepointsappcourier.ApiClasses.SecondCredentials;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserRoom;
+import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.ApiBuilder;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -17,21 +18,20 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AuthViewModel extends AndroidViewModel {
 
     private LiveData<User> userLiveData;
     private MutableLiveData<SecondCredentials> secondCredentialsMutableLiveData = new MutableLiveData<>();
     private UserDao userDao;
-    private final static String baseUrl = "http://212.109.219.69:3007/";
+    private PointsApi pointsApi;
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
         userLiveData = userDao.getUserLiveData();
+        pointsApi = ApiBuilder.getPointsApi();
     }
 
     public LiveData<User> getUser() {
@@ -43,11 +43,6 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public void requestCode(FirstCredentials firstCredentials) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
         Call<SecondCredentials> call = pointsApi.getCode(firstCredentials);
         call.enqueue(new Callback<SecondCredentials>() {
             @Override
@@ -67,11 +62,6 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public void login(SecondCredentials secondCredentials) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
         Call<User> call = pointsApi.login(secondCredentials);
         call.enqueue(new Callback<User>() {
             @Override

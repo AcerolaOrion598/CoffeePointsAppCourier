@@ -10,10 +10,10 @@ import com.djaphar.coffeepointsappcourier.LocalDataClasses.Supervisor;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserRoom;
+import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.ApiBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -22,8 +22,6 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -32,13 +30,14 @@ public class MainViewModel extends AndroidViewModel {
     private MutableLiveData<ArrayList<Product>> productsMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<UpdatableUser> updatableUserMutableLiveData = new MutableLiveData<>();
     private UserDao userDao;
-    private final static String baseUrl = "http://212.109.219.69:3007/";
+    private PointsApi pointsApi;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         UserRoom userRoom = UserRoom.getDatabase(application);
         userDao = userRoom.userDao();
         userLiveData = userDao.getUserLiveData();
+        pointsApi = ApiBuilder.getPointsApi();
     }
 
     public MutableLiveData<ArrayList<Product>> getProducts() {
@@ -61,14 +60,7 @@ public class MainViewModel extends AndroidViewModel {
         UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUser());
     }
 
-    public void requestUpdateCourier(String id, String token, UpdatableUser updatableUser, boolean unset) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", token);
+    public void requestUpdateCourier(String id, HashMap<String, String> headersMap, UpdatableUser updatableUser, boolean unset, boolean logout) {
         Call<User> call = pointsApi.requestUpdateCourier(id, headersMap, updatableUser);
         call.enqueue(new Callback<User>() {
             @Override
@@ -90,7 +82,12 @@ public class MainViewModel extends AndroidViewModel {
                     return;
                 }
 
-                requestUpdatableUser(id, token);
+                if (logout) {
+                    logout();
+                    return;
+                }
+
+                requestUpdatableUser(id, headersMap);
             }
 
             @Override
@@ -100,14 +97,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestUser(String id, String token, Integer oldHash) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", token);
+    public void requestUser(String id, HashMap<String, String> headersMap, Integer oldHash) {
         Call<User> call = pointsApi.requestUser(id, headersMap);
         call.enqueue(new Callback<User>() {
             @Override
@@ -137,14 +127,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestUpdatableUser(String id, String token) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", token);
+    public void requestUpdatableUser(String id, HashMap<String, String> headersMap) {
         Call<UpdatableUser> call = pointsApi.requestUpdatableUser(id, headersMap);
         call.enqueue(new Callback<UpdatableUser>() {
             @Override
@@ -169,11 +152,6 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestSupervisor(String id) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
         Call<Supervisor> call = pointsApi.requestSupervisor(id);
         call.enqueue(new Callback<Supervisor>() {
             @Override
@@ -193,14 +171,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestSupervisorProducts(String token, String supervisor) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", token);
+    public void requestSupervisorProducts(HashMap<String, String> headersMap, String supervisor) {
         Call<ArrayList<Product>> call = pointsApi.requestSupervisorProducts(supervisor, headersMap);
         call.enqueue(new Callback<ArrayList<Product>>() {
             @Override
@@ -219,14 +190,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestProductsListToggle(String userId, String productId, String token, String supervisor) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        PointsApi pointsApi = retrofit.create(PointsApi.class);
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", token);
+    public void requestProductsListToggle(String userId, String productId, HashMap<String, String> headersMap, String supervisor) {
         Call<Void> call = pointsApi.requestProductsListToggle(productId, headersMap);
         call.enqueue(new Callback<Void>() {
             @Override
@@ -234,8 +198,8 @@ public class MainViewModel extends AndroidViewModel {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                 }
-                requestUpdatableUser(userId, token);
-                requestSupervisorProducts(token, supervisor);
+                requestUpdatableUser(userId, headersMap);
+                requestSupervisorProducts(headersMap, supervisor);
             }
 
             @Override

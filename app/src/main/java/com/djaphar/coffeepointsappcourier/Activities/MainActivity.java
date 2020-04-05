@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.djaphar.coffeepointsappcourier.ApiClasses.Coordinates;
 import com.djaphar.coffeepointsappcourier.ApiClasses.Product;
 import com.djaphar.coffeepointsappcourier.ApiClasses.UpdatableUser;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
@@ -20,6 +19,7 @@ import com.djaphar.coffeepointsappcourier.SupportClasses.Services.LocationUpdate
 import com.djaphar.coffeepointsappcourier.ViewModels.MainViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -38,9 +38,9 @@ public class MainActivity extends MyAppCompactActivity {
     private UpdatableUser updatableUser;
     private ArrayList<Product> updatedProducts = new ArrayList<>();
     private ArrayList<Product> products;
-    private Coordinates coordinates = new Coordinates(37.55, 35.77);
     private Boolean visible, status;
     private String[] perms = new String[2];
+    private HashMap<String, String> authHeaderMap = new HashMap<>();
     private static final int  LOGOUT_ID = 1, UNSET_OWNER_ID = 2;
 
     @Override
@@ -77,9 +77,10 @@ public class MainActivity extends MyAppCompactActivity {
                     finish();
                     return;
                 }
+                authHeaderMap.put("Authorization", user.getToken());
                 mainViewModel.requestSupervisor(user.getSupervisor());
-                mainViewModel.requestSupervisorProducts(user.getToken(), user.getSupervisor());
-                mainViewModel.requestUpdatableUser(user.get_id(), user.getToken());
+                mainViewModel.requestSupervisorProducts(authHeaderMap, user.getSupervisor());
+                mainViewModel.requestUpdatableUser(user.get_id(), authHeaderMap);
                 return;
             }
             stopService(new Intent(this, LocationUpdateService.class));
@@ -163,11 +164,12 @@ public class MainActivity extends MyAppCompactActivity {
             .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> {
                 switch (methodId) {
                     case UNSET_OWNER_ID:
-                        setUpdatableUserOptions(false, false, null, coordinates);
-                        mainViewModel.requestUpdateCourier(user.get_id(), user.getToken(), updatableUser,true);
+                        setUpdatableUserOptions(false, false, null);
+                        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser,true, false);
                         break;
                     case LOGOUT_ID:
-                        mainViewModel.logout();
+                        setUpdatableUserOptions(false, false, updatableUser.getSupervisor());
+                        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser, false, true);
                         break;
                 }
             })
@@ -182,23 +184,23 @@ public class MainActivity extends MyAppCompactActivity {
 
     private void saveUpdates() {
         stopService(new Intent(this, LocationUpdateService.class));
-        setUpdatableUserOptions(visible, status, user.getSupervisor(), coordinates);
-        mainViewModel.requestUpdateCourier(user.get_id(), user.getToken(), updatableUser, false);
+        setUpdatableUserOptions(visible, status, user.getSupervisor());
+        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser, false, false);
         requestProductsListToggle();
     }
 
     private void requestProductsListToggle() {
         for (Product product : updatedProducts) {
-            mainViewModel.requestProductsListToggle(user.get_id(), product.get_id(), user.getToken(), user.getSupervisor());
+            mainViewModel.requestProductsListToggle(user.get_id(), product.get_id(), authHeaderMap, user.getSupervisor());
         }
         updatedProducts.clear();
     }
 
-    private void setUpdatableUserOptions(boolean active, boolean notHere, String supervisorId, Coordinates coordinates) {
+    private void setUpdatableUserOptions(boolean active, boolean notHere, String supervisorId) {
         updatableUser.setActive(active);
         updatableUser.setCurrentlyNotHere(notHere);
         updatableUser.setSupervisor(supervisorId);
-        updatableUser.setCoordinates(coordinates);
+        updatableUser.setCoordinates(null);
     }
 
     private void startLocationUpdateService() {
@@ -231,9 +233,6 @@ public class MainActivity extends MyAppCompactActivity {
         if (user == null) {
             return;
         }
-        mainViewModel.requestUser(user.get_id(), user.getToken(), user.getUserHash());
-//        mainViewModel.requestSupervisor(user.getSupervisor());
-//        mainViewModel.requestSupervisorProducts(user.getToken(), user.getSupervisor());
-//        mainViewModel.requestUpdatableUser(user.get_id(), user.getToken());
+        mainViewModel.requestUser(user.get_id(), authHeaderMap, user.getUserHash());
     }
 }

@@ -9,7 +9,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 
 import com.djaphar.coffeepointsappcourier.Activities.MainActivity;
@@ -18,6 +17,7 @@ import com.djaphar.coffeepointsappcourier.ApiClasses.PointsApi;
 import com.djaphar.coffeepointsappcourier.ApiClasses.UpdatableUser;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.R;
+import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.ApiBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,34 +29,27 @@ import androidx.core.app.NotificationCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.App.CHANNEL_ID;
 
 public class LocationUpdateService extends Service {
 
-    private LocationManager locationManager = null;
-    private UpdatableUser updatableUser = null;
+    private LocationManager locationManager;
+    private UpdatableUser updatableUser;
     private String userId;
     private Map<String, String> userToken;
-    private PointsApi pointsApi = null;
-    private Handler handler;
+    private PointsApi pointsApi;
     private LocationUpdateListener[] locationListeners = new LocationUpdateListener[] {
             new LocationUpdateListener(LocationManager.GPS_PROVIDER),
             new LocationUpdateListener(LocationManager.NETWORK_PROVIDER)
     };
 
-
     private class LocationUpdateListener implements LocationListener {
 
         Location lastLocation;
-        String provider;
-        boolean listenerRegistered = false;
 
         LocationUpdateListener(String provider) {
             lastLocation = new Location(provider);
-            this.provider = provider;
         }
 
         @Override
@@ -74,11 +67,6 @@ public class LocationUpdateService extends Service {
                 @Override
                 public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) { }
             });
-
-            if (locationManager != null) {
-                listenerRegistered = false;
-                locationManager.removeUpdates(this);
-            }
         }
 
         @Override
@@ -107,11 +95,7 @@ public class LocationUpdateService extends Service {
             userId = extras.getString("userId");
             userToken = new HashMap<>();
             userToken.put("Authorization", Objects.requireNonNull(extras.getString("userToken")));
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://212.109.219.69:3007/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            pointsApi = retrofit.create(PointsApi.class);
+            pointsApi = ApiBuilder.getPointsApi();
         }
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -128,34 +112,20 @@ public class LocationUpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        handler = new Handler();
         initializeLocationManager();
-        startRunnable();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 1f, locationListeners[0]);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 1f, locationListeners[1]);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+        for (LocationUpdateListener listener : locationListeners) {
+            locationManager.removeUpdates(listener);
+        }
     }
 
     private void initializeLocationManager() {
-        if (locationManager == null) {
-            locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        }
+        locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
     }
-
-    private void startRunnable() {
-        asyncLocationUpdater.run();
-    }
-
-    private Runnable asyncLocationUpdater = () -> {
-        for (LocationUpdateListener listener : locationListeners) {
-            if (!listener.listenerRegistered) {
-                locationManager.requestLocationUpdates(listener.provider, 100, 1f, listener);
-                listener.listenerRegistered = true;
-            }
-        }
-        handler.postDelayed(this::startRunnable, 6000);
-    };
 }

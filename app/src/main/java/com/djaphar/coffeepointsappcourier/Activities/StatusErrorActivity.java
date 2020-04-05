@@ -11,6 +11,8 @@ import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.MyAppCompa
 import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.UserChangeChecker;
 import com.djaphar.coffeepointsappcourier.ViewModels.MainViewModel;
 
+import java.util.HashMap;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -20,6 +22,7 @@ public class StatusErrorActivity extends MyAppCompactActivity {
     private MainViewModel mainViewModel;
     private User user;
     private TextView statusErrorExitTv;
+    private HashMap<String, String> authHeaderMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class StatusErrorActivity extends MyAppCompactActivity {
                 return;
             }
             this.user = user;
+            authHeaderMap.put("Authorization", user.getToken());
             if (user.getSupervisor() == null) {
                 return;
             }
@@ -71,6 +75,6 @@ public class StatusErrorActivity extends MyAppCompactActivity {
         if (user == null) {
             return;
         }
-        mainViewModel.requestUser(user.get_id(), user.getToken(), user.getUserHash());
+        mainViewModel.requestUser(user.get_id(), authHeaderMap, user.getUserHash());
     }
 }
