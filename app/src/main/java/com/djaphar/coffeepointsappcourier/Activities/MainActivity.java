@@ -164,12 +164,12 @@ public class MainActivity extends MyAppCompactActivity {
             .setPositiveButton(R.string.dialog_positive_btn, (dialogInterface, i) -> {
                 switch (methodId) {
                     case UNSET_OWNER_ID:
-                        setUpdatableUserOptions(false, false, null);
-                        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser,true, false);
+                        setUpdatableUserOptions(false, false);
+                        mainViewModel.requestUnsubscribe(user.get_id(), authHeaderMap);
                         break;
                     case LOGOUT_ID:
-                        setUpdatableUserOptions(false, false, updatableUser.getSupervisor());
-                        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser, false, true);
+                        setUpdatableUserOptions(false, false);
+                        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser,  true);
                         break;
                 }
             })
@@ -184,8 +184,8 @@ public class MainActivity extends MyAppCompactActivity {
 
     private void saveUpdates() {
         stopService(new Intent(this, LocationUpdateService.class));
-        setUpdatableUserOptions(visible, status, user.getSupervisor());
-        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser, false, false);
+        setUpdatableUserOptions(visible, status);
+        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser,false);
         requestProductsListToggle();
     }
 
@@ -196,10 +196,9 @@ public class MainActivity extends MyAppCompactActivity {
         updatedProducts.clear();
     }
 
-    private void setUpdatableUserOptions(boolean active, boolean notHere, String supervisorId) {
+    private void setUpdatableUserOptions(boolean active, boolean notHere) {
         updatableUser.setActive(active);
         updatableUser.setCurrentlyNotHere(notHere);
-        updatableUser.setSupervisor(supervisorId);
         updatableUser.setCoordinates(null);
     }
 

@@ -60,7 +60,7 @@ public class MainViewModel extends AndroidViewModel {
         UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUser());
     }
 
-    public void requestUpdateCourier(String id, HashMap<String, String> headersMap, UpdatableUser updatableUser, boolean unset, boolean logout) {
+    public void requestUpdateCourier(String id, HashMap<String, String> headersMap, UpdatableUser updatableUser, boolean logout) {
         Call<User> call = pointsApi.requestUpdateCourier(id, headersMap, updatableUser);
         call.enqueue(new Callback<User>() {
             @Override
@@ -70,15 +70,7 @@ public class MainViewModel extends AndroidViewModel {
                     return;
                 }
 
-                User user = response.body();
-                if (user == null) {
-                    return;
-                }
-
-                if (unset) {
-                    Integer newHash = user.determineHash();
-                    user.setUserHash(newHash);
-                    UserRoom.databaseWriteExecutor.execute(() -> userDao.updateUser(response.body()));
+                if (response.body() == null) {
                     return;
                 }
 
@@ -88,6 +80,34 @@ public class MainViewModel extends AndroidViewModel {
                 }
 
                 requestUpdatableUser(id, headersMap);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestUnsubscribe(String userId, HashMap<String, String> headersMap) {
+        Call<User> call = pointsApi.requestUnsubscribe(userId, headersMap);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                User user = response.body();
+
+                if (user == null) {
+                    return;
+                }
+
+                Integer newHash = user.determineHash();
+                user.setUserHash(newHash);
+                UserRoom.databaseWriteExecutor.execute(() -> userDao.updateUser(user));
             }
 
             @Override

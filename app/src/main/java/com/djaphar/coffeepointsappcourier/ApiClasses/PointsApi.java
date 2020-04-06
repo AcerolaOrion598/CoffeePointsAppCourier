@@ -39,4 +39,7 @@ public interface PointsApi {
 
     @GET("api/products/{id}/togglelist")
     Call<Void> requestProductsListToggle(@Path("id") String id, @HeaderMap Map<String, String> headers);
+
+    @GET("api/couriers/{id}/unsubscribe")
+    Call<User> requestUnsubscribe(@Path("id") String id, @HeaderMap Map<String, String> headers);
 }
