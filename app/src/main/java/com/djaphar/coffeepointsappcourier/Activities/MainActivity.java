@@ -70,17 +70,22 @@ public class MainActivity extends MyAppCompactActivity {
 
         mainViewModel.getUser().observe(this, user -> {
             if (user != null) {
-                this.user = user;
-                if (user.getSupervisor() == null) {
+                if (this.user != null && !this.user.getSupervisor().equals(user.getSupervisor())) {
                     stopService(new Intent(this, LocationUpdateService.class));
+                }
+
+                if (user.getSupervisor() == null) {
                     startActivity(new Intent(this, StatusErrorActivity.class));
                     finish();
                     return;
                 }
-                authHeaderMap.put("Authorization", user.getToken());
+
+                this.user = user;
+                authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
                 mainViewModel.requestSupervisor(user.getSupervisor());
                 mainViewModel.requestSupervisorProducts(authHeaderMap, user.getSupervisor());
                 mainViewModel.requestUpdatableUser(user.get_id(), authHeaderMap);
+                requestUser();
                 return;
             }
             stopService(new Intent(this, LocationUpdateService.class));
@@ -209,6 +214,7 @@ public class MainActivity extends MyAppCompactActivity {
         intent.putExtra("isCurrentlyNotHere", status);
         intent.putExtra("supervisor", updatableUser.getSupervisor());
         intent.putExtra("userId", user.get_id());
+        intent.putExtra("authorization_header", getString(R.string.authorization_header));
         intent.putExtra("userToken", user.getToken());
         startService(intent);
     }

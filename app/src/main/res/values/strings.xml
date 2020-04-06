@@ -27,4 +27,5 @@
     <string name="request_code_btn_text">Далее</string>
     <string name="log_in_btn">Войти</string>
     <string name="status_error_text">Функционал приложения недоступен, так как Вы не привязаны ни к какому куратору. Обратитесь к своему руководству.</string>
+    <string name="authorization_header">Authorization</string>
 </resources>

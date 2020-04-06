@@ -38,7 +38,7 @@ public class StatusErrorActivity extends MyAppCompactActivity {
                 return;
             }
             this.user = user;
-            authHeaderMap.put("Authorization", user.getToken());
+            authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
             if (user.getSupervisor() == null) {
                 return;
             }

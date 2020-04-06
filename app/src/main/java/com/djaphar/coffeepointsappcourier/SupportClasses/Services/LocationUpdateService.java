@@ -59,13 +59,33 @@ public class LocationUpdateService extends Service {
                 return;
             }
             updatableUser.setCoordinates(new Coordinates(lastLocation.getLatitude(), lastLocation.getLongitude()));
-            Call<User> call = pointsApi.requestUpdateCourier(userId, userToken, updatableUser);
-            call.enqueue(new Callback<User>() {
+            Call<UpdatableUser> callCheck = pointsApi.requestUpdatableUser(userId, userToken);
+            callCheck.enqueue(new Callback<UpdatableUser>() {
                 @Override
-                public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) { }
+                public void onResponse(@NonNull Call<UpdatableUser> callCheck, @NonNull Response<UpdatableUser> response) {
+                    UpdatableUser userToCheck = response.body();
+                    if (userToCheck == null) {
+                        stopSelf();
+                        return;
+                    }
+
+                    if (!updatableUser.getSupervisor().equals(userToCheck.getSupervisor())) {
+                        stopSelf();
+                        return;
+                    }
+
+                    Call<User> call = pointsApi.requestUpdateCourier(userId, userToken, updatableUser);
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) { }
+
+                        @Override
+                        public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) { }
+                    });
+                }
 
                 @Override
-                public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) { }
+                public void onFailure(@NonNull Call<UpdatableUser> callCheck, @NonNull Throwable t) { }
             });
         }
 
@@ -94,7 +114,10 @@ public class LocationUpdateService extends Service {
                     extras.getString("supervisor"), null, null);
             userId = extras.getString("userId");
             userToken = new HashMap<>();
-            userToken.put("Authorization", Objects.requireNonNull(extras.getString("userToken")));
+            String authorizationHeader = extras.getString("authorization_header");
+            if (authorizationHeader != null) {
+                userToken.put(authorizationHeader, Objects.requireNonNull(extras.getString("userToken")));
+            }
             pointsApi = ApiBuilder.getPointsApi();
         }
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -113,8 +136,8 @@ public class LocationUpdateService extends Service {
     public void onCreate() {
         super.onCreate();
         initializeLocationManager();
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 1f, locationListeners[0]);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 1f, locationListeners[1]);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50000, 1f, locationListeners[0]);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 50000, 1f, locationListeners[1]);
     }
 
     @Override
