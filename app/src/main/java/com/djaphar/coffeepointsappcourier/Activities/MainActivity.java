@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.djaphar.coffeepointsappcourier.ApiClasses.Product;
@@ -33,6 +34,7 @@ public class MainActivity extends MyAppCompactActivity {
     private MainViewModel mainViewModel;
     private RecyclerView productsRecyclerView;
     private TextView statusTv, ownerNameTv;
+    private EditText hintEd;
     private UserChangeChecker userChangeChecker;
     private User user;
     private UpdatableUser updatableUser;
@@ -53,6 +55,7 @@ public class MainActivity extends MyAppCompactActivity {
         statusTv = findViewById(R.id.status_tv);
         productsRecyclerView = findViewById(R.id.products_recycler_view);
         ownerNameTv = findViewById(R.id.owner_name_tv);
+        hintEd = findViewById(R.id.hint_ed);
         Button saveBtn = findViewById(R.id.save_btn);
         TextView unsetOwnerBtn = findViewById(R.id.unset_owner_btn);
         TextView exitTv = findViewById(R.id.exit_tv);
@@ -107,6 +110,11 @@ public class MainActivity extends MyAppCompactActivity {
                         PermissionDriver.requestPerms(this, perms);
                     }
                 }
+                String hint = updatableUser.getHint();
+                if (hint == null) {
+                    return;
+                }
+                hintEd.setText(hint);
             }
 
             if (products == null) {
@@ -204,6 +212,7 @@ public class MainActivity extends MyAppCompactActivity {
     private void setUpdatableUserOptions(boolean active, boolean notHere) {
         updatableUser.setActive(active);
         updatableUser.setCurrentlyNotHere(notHere);
+        updatableUser.setHint(hintEd.getText().toString());
         updatableUser.setCoordinates(null);
     }
 
@@ -213,6 +222,7 @@ public class MainActivity extends MyAppCompactActivity {
         intent.putExtra("isActive", visible);
         intent.putExtra("isCurrentlyNotHere", status);
         intent.putExtra("supervisor", updatableUser.getSupervisor());
+        intent.putExtra("hint", updatableUser.getHint());
         intent.putExtra("userId", user.get_id());
         intent.putExtra("authorization_header", getString(R.string.authorization_header));
         intent.putExtra("userToken", user.getToken());

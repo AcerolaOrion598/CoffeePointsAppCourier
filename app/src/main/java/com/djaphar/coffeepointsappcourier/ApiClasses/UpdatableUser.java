@@ -4,14 +4,15 @@ import java.util.ArrayList;
 
 public class UpdatableUser {
     private Boolean isActive, isCurrentlyNotHere;
-    private String supervisor;
+    private String supervisor, hint;
     private Coordinates coordinates;
     private ArrayList<Product> productList;
 
-    public UpdatableUser(Boolean isActive, Boolean isCurrentlyNotHere, String supervisor, Coordinates coordinates, ArrayList<Product> productList) {
+    public UpdatableUser(Boolean isActive, Boolean isCurrentlyNotHere, String supervisor, String hint, Coordinates coordinates, ArrayList<Product> productList) {
         this.isActive = isActive;
         this.isCurrentlyNotHere = isCurrentlyNotHere;
         this.supervisor = supervisor;
+        this.hint = hint;
         this.coordinates = coordinates;
         this.productList = productList;
     }
@@ -26,6 +27,10 @@ public class UpdatableUser {
 
     public String getSupervisor() {
         return supervisor;
+    }
+
+    public String getHint() {
+        return hint;
     }
 
     public Coordinates getCoordinates() {
@@ -46,6 +51,10 @@ public class UpdatableUser {
 
     public void setSupervisor(String supervisor) {
         this.supervisor = supervisor;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     public void setCoordinates(Coordinates coordinates) {
