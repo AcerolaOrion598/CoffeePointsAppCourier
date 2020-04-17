@@ -9,6 +9,7 @@ import com.djaphar.coffeepointsappcourier.ApiClasses.SecondCredentials;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserDao;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.UserRoom;
+import com.djaphar.coffeepointsappcourier.R;
 import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.ApiBuilder;
 
 import androidx.annotation.NonNull;
@@ -56,7 +57,7 @@ public class AuthViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<SecondCredentials> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -81,7 +82,7 @@ public class AuthViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), R.string.network_error_toast, Toast.LENGTH_SHORT).show();
             }
         });
     }
