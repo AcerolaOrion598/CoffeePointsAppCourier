@@ -12,13 +12,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import com.djaphar.coffeepointsappcourier.Activities.MainActivity;
-import com.djaphar.coffeepointsappcourier.ApiClasses.Coordinates;
 import com.djaphar.coffeepointsappcourier.ApiClasses.PointsApi;
 import com.djaphar.coffeepointsappcourier.ApiClasses.UpdatableUser;
 import com.djaphar.coffeepointsappcourier.LocalDataClasses.User;
 import com.djaphar.coffeepointsappcourier.R;
 import com.djaphar.coffeepointsappcourier.SupportClasses.OtherClasses.ApiBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -58,7 +58,11 @@ public class LocationUpdateService extends Service {
             if (updatableUser == null || pointsApi == null) {
                 return;
             }
-            updatableUser.setCoordinates(new Coordinates(lastLocation.getLatitude(), lastLocation.getLongitude()));
+            ArrayList<Double> coordinates = new ArrayList<>();
+            coordinates.add(lastLocation.getLongitude());
+            coordinates.add(lastLocation.getLatitude());
+            updatableUser.setCoordinates(coordinates);
+//            updatableUser.setCoordinates(new Coordinates(lastLocation.getLatitude(), lastLocation.getLongitude()));
             Call<UpdatableUser> callCheck = pointsApi.requestUpdatableUser(userId, headersMap);
             callCheck.enqueue(new Callback<UpdatableUser>() {
                 @Override
@@ -123,8 +127,8 @@ public class LocationUpdateService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Test")
-                .setContentText("Test2")
+                .setContentTitle(getString(R.string.location_service_title))
+                .setContentText(getString(R.string.location_service_text))
                 .setSmallIcon(R.drawable.red_marker)
                 .setContentIntent(pendingIntent)
                 .build();

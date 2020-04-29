@@ -27,4 +27,6 @@
     <string name="status_error_text">Функционал приложения недоступен, так как Вы не привязаны ни к какому куратору. Обратитесь к своему руководству.</string>
     <string name="authorization_header">Authorization</string>
     <string name="network_error_toast">Сетевая Ошибка</string>
+    <string name="location_service_title">Вы на смене</string>
+    <string name="location_service_text">Отправка геоданных включена</string>
 </resources>
