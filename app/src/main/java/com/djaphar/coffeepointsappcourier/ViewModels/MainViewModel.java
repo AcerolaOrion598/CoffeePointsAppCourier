@@ -61,8 +61,8 @@ public class MainViewModel extends AndroidViewModel {
         UserRoom.databaseWriteExecutor.execute(() -> userDao.deleteUser());
     }
 
-    public void requestUpdateCourier(String id, HashMap<String, String> headersMap, UpdatableUser updatableUser, boolean logout) {
-        Call<User> call = pointsApi.requestUpdateCourier(id, headersMap, updatableUser);
+    public void requestUpdateCourier(HashMap<String, String> headersMap, UpdatableUser updatableUser, boolean logout) {
+        Call<User> call = pointsApi.requestUpdateCourier(headersMap, updatableUser);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
@@ -80,7 +80,7 @@ public class MainViewModel extends AndroidViewModel {
                     return;
                 }
 
-                requestUpdatableUser(id, headersMap);
+                requestUpdatableUser(headersMap);
             }
 
             @Override
@@ -118,8 +118,8 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestUser(String id, HashMap<String, String> headersMap, Integer oldHash) {
-        Call<User> call = pointsApi.requestUser(id, headersMap);
+    public void requestUser(HashMap<String, String> headersMap, Integer oldHash) {
+        Call<User> call = pointsApi.requestUser(headersMap);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
@@ -148,8 +148,8 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestUpdatableUser(String id, HashMap<String, String> headersMap) {
-        Call<UpdatableUser> call = pointsApi.requestUpdatableUser(id, headersMap);
+    public void requestUpdatableUser(HashMap<String, String> headersMap) {
+        Call<UpdatableUser> call = pointsApi.requestUpdatableUser(headersMap);
         call.enqueue(new Callback<UpdatableUser>() {
             @Override
             public void onResponse(@NonNull Call<UpdatableUser> call, @NonNull Response<UpdatableUser> response) {
@@ -211,7 +211,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestProductsListToggle(String userId, String productId, HashMap<String, String> headersMap, String supervisor) {
+    public void requestProductsListToggle(String productId, HashMap<String, String> headersMap, String supervisor) {
         Call<Void> call = pointsApi.requestProductsListToggle(productId, headersMap);
         call.enqueue(new Callback<Void>() {
             @Override
@@ -219,7 +219,7 @@ public class MainViewModel extends AndroidViewModel {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                 }
-                requestUpdatableUser(userId, headersMap);
+                requestUpdatableUser(headersMap);
                 requestSupervisorProducts(headersMap, supervisor);
             }
 

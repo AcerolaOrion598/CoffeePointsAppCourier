@@ -87,7 +87,7 @@ public class MainActivity extends MyAppCompactActivity {
                 authHeaderMap.put(getString(R.string.authorization_header), user.getToken());
                 mainViewModel.requestSupervisor(user.getSupervisor());
                 mainViewModel.requestSupervisorProducts(authHeaderMap, user.getSupervisor());
-                mainViewModel.requestUpdatableUser(user.get_id(), authHeaderMap);
+                mainViewModel.requestUpdatableUser(authHeaderMap);
                 requestUser();
                 return;
             }
@@ -182,7 +182,7 @@ public class MainActivity extends MyAppCompactActivity {
                         break;
                     case LOGOUT_ID:
                         setUpdatableUserOptions(false, false);
-                        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser,  true);
+                        mainViewModel.requestUpdateCourier(authHeaderMap, updatableUser,  true);
                         break;
                 }
             })
@@ -198,13 +198,13 @@ public class MainActivity extends MyAppCompactActivity {
     private void saveUpdates() {
         stopService(new Intent(this, LocationUpdateService.class));
         setUpdatableUserOptions(visible, status);
-        mainViewModel.requestUpdateCourier(user.get_id(), authHeaderMap, updatableUser,false);
+        mainViewModel.requestUpdateCourier(authHeaderMap, updatableUser,false);
         requestProductsListToggle();
     }
 
     private void requestProductsListToggle() {
         for (Product product : updatedProducts) {
-            mainViewModel.requestProductsListToggle(user.get_id(), product.get_id(), authHeaderMap, user.getSupervisor());
+            mainViewModel.requestProductsListToggle(product.get_id(), authHeaderMap, user.getSupervisor());
         }
         updatedProducts.clear();
     }
@@ -229,13 +229,6 @@ public class MainActivity extends MyAppCompactActivity {
         startService(intent);
     }
 
-//    private void refresh() {
-//        mainViewModel.requestUser(user.get_id(), user.getToken(), user.getUserHash());
-//        mainViewModel.requestSupervisor(user.getSupervisor());
-//        mainViewModel.requestSupervisorProducts(user.getToken(), user.getSupervisor());
-//        mainViewModel.requestUpdatableUser(user.get_id(), user.getToken());
-//    }
-
     public void addUpdatedProduct(Product product) {
         updatedProducts.add(product);
     }
@@ -248,6 +241,6 @@ public class MainActivity extends MyAppCompactActivity {
         if (user == null) {
             return;
         }
-        mainViewModel.requestUser(user.get_id(), authHeaderMap, user.getUserHash());
+        mainViewModel.requestUser(authHeaderMap, user.getUserHash());
     }
 }

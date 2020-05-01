@@ -75,6 +75,6 @@ public class StatusErrorActivity extends MyAppCompactActivity {
         if (user == null) {
             return;
         }
-        mainViewModel.requestUser(user.get_id(), authHeaderMap, user.getUserHash());
+        mainViewModel.requestUser(authHeaderMap, user.getUserHash());
     }
 }

@@ -36,7 +36,6 @@ public class LocationUpdateService extends Service {
 
     private LocationManager locationManager;
     private UpdatableUser updatableUser;
-    private String userId;
     private Map<String, String> headersMap;
     private PointsApi pointsApi;
     private LocationUpdateListener[] locationListeners = new LocationUpdateListener[] {
@@ -62,8 +61,7 @@ public class LocationUpdateService extends Service {
             coordinates.add(lastLocation.getLongitude());
             coordinates.add(lastLocation.getLatitude());
             updatableUser.setCoordinates(coordinates);
-//            updatableUser.setCoordinates(new Coordinates(lastLocation.getLatitude(), lastLocation.getLongitude()));
-            Call<UpdatableUser> callCheck = pointsApi.requestUpdatableUser(userId, headersMap);
+            Call<UpdatableUser> callCheck = pointsApi.requestUpdatableUser(headersMap);
             callCheck.enqueue(new Callback<UpdatableUser>() {
                 @Override
                 public void onResponse(@NonNull Call<UpdatableUser> callCheck, @NonNull Response<UpdatableUser> response) {
@@ -78,7 +76,7 @@ public class LocationUpdateService extends Service {
                         return;
                     }
 
-                    Call<User> call = pointsApi.requestUpdateCourier(userId, headersMap, updatableUser);
+                    Call<User> call = pointsApi.requestUpdateCourier(headersMap, updatableUser);
                     call.enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) { }
@@ -116,7 +114,6 @@ public class LocationUpdateService extends Service {
         if (extras != null) {
             updatableUser = new UpdatableUser(extras.getBoolean("isActive"), extras.getBoolean("isCurrentlyNotHere"),
                     extras.getString("supervisor"), extras.getString("hint"), null, null);
-            userId = extras.getString("userId");
             headersMap = new HashMap<>();
             String authorizationHeader = extras.getString("authorization_header");
             if (authorizationHeader != null) {
