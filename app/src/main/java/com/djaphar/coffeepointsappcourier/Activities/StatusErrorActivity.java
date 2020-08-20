@@ -21,7 +21,6 @@ public class StatusErrorActivity extends MyAppCompactActivity {
     private UserChangeChecker userChangeChecker;
     private MainViewModel mainViewModel;
     private User user;
-    private TextView statusErrorExitTv;
     private HashMap<String, String> authHeaderMap = new HashMap<>();
 
     @Override
@@ -45,7 +44,7 @@ public class StatusErrorActivity extends MyAppCompactActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         });
-        statusErrorExitTv = findViewById(R.id.status_error_exit_tv);
+        TextView statusErrorExitTv = findViewById(R.id.status_error_exit_tv);
         statusErrorExitTv.setOnClickListener(lView -> createLogoutDialog());
     }
 

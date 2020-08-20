@@ -3,15 +3,15 @@ package com.djaphar.coffeepointsappcourier.ApiClasses;
 import java.util.ArrayList;
 
 public class UpdatableUser {
-    private Boolean isActive, isCurrentlyNotHere;
+
+    private Boolean isActive, isAway;
     private String supervisor, hint;
-//    private Coordinates coordinates;
     private ArrayList<Double> coordinates;
     private ArrayList<Product> productList;
 
-    public UpdatableUser(Boolean isActive, Boolean isCurrentlyNotHere, String supervisor, String hint, ArrayList<Double> coordinates, ArrayList<Product> productList) {
+    public UpdatableUser(Boolean isActive, Boolean isAway, String supervisor, String hint, ArrayList<Double> coordinates, ArrayList<Product> productList) {
         this.isActive = isActive;
-        this.isCurrentlyNotHere = isCurrentlyNotHere;
+        this.isAway = isAway;
         this.supervisor = supervisor;
         this.hint = hint;
         this.coordinates = coordinates;
@@ -22,8 +22,8 @@ public class UpdatableUser {
         return isActive;
     }
 
-    public Boolean isCurrentlyNotHere() {
-        return isCurrentlyNotHere;
+    public Boolean isAway() {
+        return isAway;
     }
 
     public String getSupervisor() {
@@ -46,8 +46,8 @@ public class UpdatableUser {
         this.isActive = isActive;
     }
 
-    public void setCurrentlyNotHere(Boolean isCurrentlyNotHere) {
-        this.isCurrentlyNotHere = isCurrentlyNotHere;
+    public void setAway(Boolean isAway) {
+        this.isAway = isAway;
     }
 
     public void setSupervisor(String supervisor) {

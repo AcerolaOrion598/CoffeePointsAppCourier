@@ -62,8 +62,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestUpdateCourier(HashMap<String, String> headersMap, UpdatableUser updatableUser, boolean logout) {
-        Call<User> call = pointsApi.requestUpdateCourier(headersMap, updatableUser);
-        call.enqueue(new Callback<User>() {
+        pointsApi.requestUpdateCourier(headersMap, updatableUser).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {
@@ -90,9 +89,8 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestUnsubscribe(String userId, HashMap<String, String> headersMap) {
-        Call<User> call = pointsApi.requestUnsubscribe(userId, headersMap);
-        call.enqueue(new Callback<User>() {
+    public void requestUnsubscribe(HashMap<String, String> headersMap) {
+        pointsApi.requestUnsubscribe(headersMap).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {
@@ -119,8 +117,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestUser(HashMap<String, String> headersMap, Integer oldHash) {
-        Call<User> call = pointsApi.requestUser(headersMap);
-        call.enqueue(new Callback<User>() {
+        pointsApi.requestUser(headersMap).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {
@@ -149,8 +146,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestUpdatableUser(HashMap<String, String> headersMap) {
-        Call<UpdatableUser> call = pointsApi.requestUpdatableUser(headersMap);
-        call.enqueue(new Callback<UpdatableUser>() {
+        pointsApi.requestUpdatableUser(headersMap).enqueue(new Callback<UpdatableUser>() {
             @Override
             public void onResponse(@NonNull Call<UpdatableUser> call, @NonNull Response<UpdatableUser> response) {
                 if (!response.isSuccessful()) {
@@ -173,8 +169,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestSupervisor(String id) {
-        Call<Supervisor> call = pointsApi.requestSupervisor(id);
-        call.enqueue(new Callback<Supervisor>() {
+        pointsApi.requestSupervisor(id).enqueue(new Callback<Supervisor>() {
             @Override
             public void onResponse(@NonNull Call<Supervisor> call, @NonNull Response<Supervisor> response) {
                 if (!response.isSuccessful()) {
@@ -193,8 +188,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestSupervisorProducts(HashMap<String, String> headersMap, String supervisor) {
-        Call<ArrayList<Product>> call = pointsApi.requestSupervisorProducts(supervisor, headersMap);
-        call.enqueue(new Callback<ArrayList<Product>>() {
+        pointsApi.requestSupervisorProducts(supervisor, headersMap).enqueue(new Callback<ArrayList<Product>>() {
             @Override
             public void onResponse(@NonNull Call<ArrayList<Product>> call, @NonNull Response<ArrayList<Product>> response) {
                 if (!response.isSuccessful()) {
@@ -212,8 +206,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void requestProductsListToggle(String productId, HashMap<String, String> headersMap, String supervisor) {
-        Call<Void> call = pointsApi.requestProductsListToggle(productId, headersMap);
-        call.enqueue(new Callback<Void>() {
+        pointsApi.requestProductsListToggle(productId, headersMap).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {

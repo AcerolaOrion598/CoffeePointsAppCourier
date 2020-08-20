@@ -44,8 +44,7 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public void requestCode(FirstCredentials firstCredentials) {
-        Call<SecondCredentials> call = pointsApi.getCode(firstCredentials);
-        call.enqueue(new Callback<SecondCredentials>() {
+        pointsApi.getCode(firstCredentials).enqueue(new Callback<SecondCredentials>() {
             @Override
             public void onResponse(@NonNull Call<SecondCredentials> call, @NonNull Response<SecondCredentials> response) {
                 if (!response.isSuccessful()) {
@@ -63,8 +62,7 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public void login(SecondCredentials secondCredentials) {
-        Call<User> call = pointsApi.login(secondCredentials);
-        call.enqueue(new Callback<User>() {
+        pointsApi.login(secondCredentials).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {

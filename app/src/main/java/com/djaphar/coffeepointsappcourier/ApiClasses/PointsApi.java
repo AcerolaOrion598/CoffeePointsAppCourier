@@ -30,7 +30,7 @@ public interface PointsApi {
 
     @GET("api/supervisors/{id}")
     Call<Supervisor> requestSupervisor(@Path("id") String id);
-    
+
     @PUT("api/couriers/me")
     Call<User> requestUpdateCourier(@HeaderMap Map<String, String> headers, @Body UpdatableUser updatableUser);
 
@@ -40,6 +40,6 @@ public interface PointsApi {
     @GET("api/products/{id}/togglelist")
     Call<Void> requestProductsListToggle(@Path("id") String id, @HeaderMap Map<String, String> headers);
 
-    @GET("api/couriers/{id}/unsubscribe")
-    Call<User> requestUnsubscribe(@Path("id") String id, @HeaderMap Map<String, String> headers);
+    @GET("api/couriers/me/unsubscribe")
+    Call<User> requestUnsubscribe(@HeaderMap Map<String, String> headers);
 }

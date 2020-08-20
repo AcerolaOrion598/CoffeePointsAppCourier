@@ -61,8 +61,7 @@ public class LocationUpdateService extends Service {
             coordinates.add(lastLocation.getLongitude());
             coordinates.add(lastLocation.getLatitude());
             updatableUser.setCoordinates(coordinates);
-            Call<UpdatableUser> callCheck = pointsApi.requestUpdatableUser(headersMap);
-            callCheck.enqueue(new Callback<UpdatableUser>() {
+            pointsApi.requestUpdatableUser(headersMap).enqueue(new Callback<UpdatableUser>() {
                 @Override
                 public void onResponse(@NonNull Call<UpdatableUser> callCheck, @NonNull Response<UpdatableUser> response) {
                     UpdatableUser userToCheck = response.body();
@@ -76,8 +75,7 @@ public class LocationUpdateService extends Service {
                         return;
                     }
 
-                    Call<User> call = pointsApi.requestUpdateCourier(headersMap, updatableUser);
-                    call.enqueue(new Callback<User>() {
+                    pointsApi.requestUpdateCourier(headersMap, updatableUser).enqueue(new Callback<User>() {
                         @Override
                         public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) { }
 

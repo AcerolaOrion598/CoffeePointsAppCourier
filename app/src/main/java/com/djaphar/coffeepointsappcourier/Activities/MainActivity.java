@@ -100,9 +100,9 @@ public class MainActivity extends MyAppCompactActivity {
             if (updatableUser != null) {
                 this.updatableUser = updatableUser;
                 visible = updatableUser.isActive();
-                status = updatableUser.isCurrentlyNotHere();
+                status = updatableUser.isAway();
                 visibleSwitch.setChecked(updatableUser.isActive());
-                statusSwitch.setChecked(updatableUser.isCurrentlyNotHere());
+                statusSwitch.setChecked(updatableUser.isAway());
                 if (updatableUser.isActive()) {
                     if (PermissionDriver.hasPerms(perms, getApplicationContext())) {
                         startLocationUpdateService();
@@ -178,7 +178,7 @@ public class MainActivity extends MyAppCompactActivity {
                 switch (methodId) {
                     case UNSET_OWNER_ID:
                         setUpdatableUserOptions(false, false);
-                        mainViewModel.requestUnsubscribe(user.get_id(), authHeaderMap);
+                        mainViewModel.requestUnsubscribe(authHeaderMap);
                         break;
                     case LOGOUT_ID:
                         setUpdatableUserOptions(false, false);
@@ -211,7 +211,7 @@ public class MainActivity extends MyAppCompactActivity {
 
     private void setUpdatableUserOptions(boolean active, boolean notHere) {
         updatableUser.setActive(active);
-        updatableUser.setCurrentlyNotHere(notHere);
+        updatableUser.setAway(notHere);
         updatableUser.setHint(hintEd.getText().toString());
         updatableUser.setCoordinates(null);
     }
